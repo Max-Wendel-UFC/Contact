@@ -12,5 +12,13 @@ class Phone(@Id
             @GeneratedValue(strategy = GenerationType.AUTO)
             val id:Long,
             @NotBlank
-            val number:String,
-            val operatorId:Operator)
+            var number:String,
+            var operatorId:Operator){
+
+    constructor()
+            :this(
+            id=0,
+            number="",
+            operatorId=Operator.UNDEFINED
+    )
+}

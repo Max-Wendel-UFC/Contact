@@ -4,18 +4,25 @@ import com.jdev.microservice.contact.model.enum.Operator
 import org.modelmapper.ModelMapper
 
 class PhoneDTO(
-        val number:String,
-        val operatorId:Operator
-        )
-        :ObjectDTO {
+        var number:String,
+        var operatorId:Operator
+        ) {
 
-    override fun convertToDTO(any: Any): ObjectDTO {
-        val modelMapper = ModelMapper()
-        return modelMapper.map(any,PhoneDTO::class.java)
-    }
+    constructor()
+            :this(
+            number= "",
+            operatorId= Operator.UNDEFINED
+    )
+    constructor(phone: Phone)
+            :this(
+            number= phone.number,
+            operatorId= phone.operatorId
+    )
 
     fun convertToPhone():Phone{
-        val modelMapper = ModelMapper()
-        return modelMapper.map(this,Phone::class.java)
+        val phone = Phone()
+        phone.number = number
+        phone.operatorId = operatorId
+        return phone
     }
 }

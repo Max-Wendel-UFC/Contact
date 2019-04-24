@@ -4,13 +4,17 @@ import org.modelmapper.ModelMapper
 
 class MailDTO(
         val address:String
-        )
-        :ObjectDTO {
+        ) {
 
-    override fun convertToDTO(any: Any): ObjectDTO {
-        val modelMapper = ModelMapper()
-        return modelMapper.map(any,MailDTO::class.java)
-    }
+    constructor()
+            :this(
+            address = ""
+            )
+
+    constructor(mail: Mail)
+            :this(
+            address = mail.address
+            )
 
     fun convertToMail():Mail{
         val modelMapper = ModelMapper()
