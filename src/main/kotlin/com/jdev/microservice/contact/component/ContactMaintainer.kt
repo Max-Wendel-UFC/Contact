@@ -1,8 +1,10 @@
 package com.jdev.microservice.contact.component
 
+import com.jdev.microservice.contact.model.Contact
 import com.jdev.microservice.contact.model.ContactDTO
 import com.jdev.microservice.contact.repository.ContactRepository
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
 @Component
@@ -10,7 +12,7 @@ class ContactMaintainer {
     @Autowired
     lateinit var contactRepository: ContactRepository
 
-    fun saveContact(contactDTO: ContactDTO):ContactDTO{
+    fun saveContact(contactDTO: ContactDTO): ContactDTO {
         val contactExist = contactRepository.findByName(contactDTO.name)
 
         if (contactExist.isPresent){
@@ -19,10 +21,7 @@ class ContactMaintainer {
             contactRepository.save(contactDTO.convertToContact())
         }
 
-        val contact = contactDTO.convertToContact()
-        val contactDTO1 = ContactDTO()
-        contactDTO1.convertToDTO(contact)
-        return contactDTO1
+        return findByNameContact(contactDTO.name)
     }
 
     fun findByNameContact(name: String): ContactDTO {
@@ -31,18 +30,30 @@ class ContactMaintainer {
         if (!contactExist.isPresent){
             throw RuntimeException("Not Found")
         }
+        val contactDTO = ContactDTO()
 
-        val contact = contactExist.get()
-        val contactDTO = ContactDTO("", arrayListOf(), arrayListOf())
-
-        return contactDTO.convertToDTO(contact)
+        return contactDTO.convertToDTO(contactExist.get())
     }
 
-    fun deleteContact(){
+    fun deleteContact(name: String):Boolean{
+        val contactExist = contactRepository.findByName(name)
 
+        if(contactExist.isPresent){
+            contactRepository.deleteById(contactExist.get().id)
+            return true
+        }
+        return false
     }
 
-    fun editContact(){
+    fun updateContact(name: String,contactDTO: ContactDTO):Boolean{
+        val contactExist = contactRepository.findByName(name)
 
+        if (contactExist.isPresent){
+            val c = contactDTO.convertToContact()
+            contactRepository.save(Contact(contactExist.get().id, c.name,c.phones,c.mails))
+            return true
+        }
+
+        return false
     }
 }

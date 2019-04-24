@@ -38,4 +38,25 @@ class ContactController {
 
         return HttpEntity(contactDTO)
     }
+
+    @DeleteMapping("/delete")
+    @ResponseBody
+    fun deleteRequest(@RequestParam(name = "name") name:String):HttpEntity<*>{
+        if (!contactMaintainer.deleteContact(name)){
+            return HttpEntity(HttpStatus.NOT_FOUND)
+        }
+        return HttpEntity(HttpStatus.OK)
+    }
+
+    @PutMapping("/update")
+    @ResponseBody
+    fun updateRequest(@RequestParam(name = "name") name:String, @RequestBody contactDTO: ContactDTO): HttpEntity<*>{
+        val done = contactMaintainer.updateContact(name,contactDTO)
+
+        if (!done){
+            return HttpEntity(HttpStatus.NOT_FOUND)
+        }
+
+        return HttpEntity(HttpStatus.OK)
+    }
 }
