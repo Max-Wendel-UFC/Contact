@@ -3,24 +3,39 @@ package com.jdev.microservice.contact.controller
 import com.jdev.microservice.contact.component.ContactMaintainer
 import com.jdev.microservice.contact.model.ContactDTO
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
+@RequestMapping("/contact")
 class ContactController {
 
     @Autowired
     lateinit var contactMaintainer: ContactMaintainer
 
     @PostMapping("/save")
-    fun saveRequest(@RequestBody contactDTO: ContactDTO): HttpStatus {
+    @ResponseBody
+    fun saveRequest(@RequestBody contactDTO: ContactDTO): HttpEntity<*> {
+        lateinit var response:ContactDTO
         try {
-            contactMaintainer.saveContact(contactDTO)
+            response = contactMaintainer.saveContact(contactDTO)
         }catch (e:RuntimeException){
-            return HttpStatus.NOT_ACCEPTABLE
+            return HttpEntity(HttpStatus.NOT_ACCEPTABLE)
         }
-        return HttpStatus.CREATED
+        return HttpEntity(response)
+    }
+
+    @GetMapping("/find")
+    @ResponseBody
+    fun getContactRequest(@RequestParam(name = "name") name:String): HttpEntity<*> {
+        lateinit var contactDTO:ContactDTO
+        try {
+            contactDTO = contactMaintainer.findByNameContact(name)
+        }catch (e:RuntimeException){
+            return HttpEntity(HttpStatus.NOT_FOUND)
+        }
+
+        return HttpEntity(contactDTO)
     }
 }
