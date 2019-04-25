@@ -18,11 +18,4 @@ class MailDTO(
         this.address = mailDTO.address
         return this
     }
-
-    fun convertToMail(): Mail {
-        val modelMapper = ModelMapper()
-        return modelMapper.map(this, Mail::class.java)
-    }
-
-
 }

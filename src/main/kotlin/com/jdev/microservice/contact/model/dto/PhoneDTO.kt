@@ -24,11 +24,4 @@ class PhoneDTO(
 
         return this
     }
-
-    fun convertToPhone(): Phone {
-        val phone = Phone()
-        phone.number = number
-        phone.operatorId = operatorId
-        return phone
-    }
 }
