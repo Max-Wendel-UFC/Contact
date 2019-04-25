@@ -3,7 +3,7 @@
 
 ## Instalando e rodando a aplicação
 #### Configurando o Banco de dados
-- Crie um nanco _PostgreSQL_ com o nome `db_contact`.
+- Crie um banco _PostgreSQL_ com o nome `db_contact`.
 - Ou se preferir outro nome, altere o nome final da `url`
 ```yaml
 #...
