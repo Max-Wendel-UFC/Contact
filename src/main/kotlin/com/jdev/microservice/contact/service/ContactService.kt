@@ -1,16 +1,27 @@
-package com.jdev.microservice.contact.component
+package com.jdev.microservice.contact.service
 
 import com.jdev.microservice.contact.model.Contact
 import com.jdev.microservice.contact.model.ContactDTO
 import com.jdev.microservice.contact.repository.ContactRepository
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.http.HttpStatus
 import org.springframework.stereotype.Component
 
 @Component
-class ContactMaintainer {
+class ContactService {
     @Autowired
     lateinit var contactRepository: ContactRepository
+
+    fun listAllContact():List<ContactDTO>{
+        val contacts = contactRepository.findAll()
+        val result = mutableListOf<ContactDTO>()
+        val aux = ContactDTO()
+
+        for (i in contacts){
+            result.add(aux.convertToDTO(i))
+        }
+
+        return result
+    }
 
     fun saveContact(contactDTO: ContactDTO): ContactDTO {
         val contactExist = contactRepository.findByName(contactDTO.name)
