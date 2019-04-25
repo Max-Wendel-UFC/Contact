@@ -1,7 +1,8 @@
 package com.jdev.microservice.contact.service
 
 import com.jdev.microservice.contact.model.Contact
-import com.jdev.microservice.contact.model.ContactDTO
+import com.jdev.microservice.contact.model.dto.ContactDTO
+import com.jdev.microservice.contact.model.dto.ObjectDTO
 import com.jdev.microservice.contact.repository.ContactRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -17,13 +18,13 @@ class ContactService {
         val aux = ContactDTO()
 
         for (i in contacts){
-            result.add(aux.convertToDTO(i))
+            result.add(aux.convertToDTO(i) as ContactDTO)
         }
 
         return result
     }
 
-    fun saveContact(contactDTO: ContactDTO): ContactDTO {
+    fun saveContact(contactDTO: ContactDTO): ObjectDTO {
         val contactExist = contactRepository.findByName(contactDTO.name)
 
         if (contactExist.isPresent){
@@ -35,7 +36,7 @@ class ContactService {
         return findByNameContact(contactDTO.name)
     }
 
-    fun findByNameContact(name: String): ContactDTO {
+    fun findByNameContact(name: String): ObjectDTO {
         val contactExist = contactRepository.findByName(name)
 
         if (!contactExist.isPresent){

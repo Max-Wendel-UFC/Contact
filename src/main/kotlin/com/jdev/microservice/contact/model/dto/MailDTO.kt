@@ -1,23 +1,28 @@
-package com.jdev.microservice.contact.model
+package com.jdev.microservice.contact.model.dto
 
+import com.jdev.microservice.contact.model.Mail
 import org.modelmapper.ModelMapper
 
 class MailDTO(
-        val address:String
-        ) {
+        var address:String
+        ):ObjectDTO {
 
     constructor()
             :this(
             address = ""
             )
 
-    constructor(mail: Mail)
-            :this(
-            address = mail.address
-            )
-
-    fun convertToMail():Mail{
+    override fun convertToDTO(any: Any): ObjectDTO {
         val modelMapper = ModelMapper()
-        return modelMapper.map(this,Mail::class.java)
+        var mailDTO = modelMapper.map(any, MailDTO::class.java)
+        this.address = mailDTO.address
+        return this
     }
+
+    fun convertToMail(): Mail {
+        val modelMapper = ModelMapper()
+        return modelMapper.map(this, Mail::class.java)
+    }
+
+
 }

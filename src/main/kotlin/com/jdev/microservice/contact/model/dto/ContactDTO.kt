@@ -1,12 +1,26 @@
-package com.jdev.microservice.contact.model
+package com.jdev.microservice.contact.model.dto
 
+import com.jdev.microservice.contact.model.Contact
+import com.jdev.microservice.contact.model.Mail
+import com.jdev.microservice.contact.model.Phone
 import org.modelmapper.ModelMapper
 
 class ContactDTO(
         var name: String,
         var phones:List<PhoneDTO>,
         var mails:List<MailDTO>
-        ){
+        ):ObjectDTO{
+
+    override fun convertToDTO(any: Any): ObjectDTO {
+        val modelMapper = ModelMapper()
+        val contact = modelMapper.map(any,ContactDTO::class.java)
+
+        this.name = contact.name
+        this.phones = contact.phones
+        this.mails = contact.mails
+
+        return this
+    }
 
     constructor()
             :this(
@@ -15,17 +29,10 @@ class ContactDTO(
             mails = arrayListOf<MailDTO>()
             )
 
-    fun convertToDTO(contact: Contact):ContactDTO{
-        this.name = contact.name
-        this.phones = mapPhone(contact.phones)
-        this.mails = mapMails(contact.mails)
-        return this
-    }
-
-    fun convertToContact():Contact{
+    fun convertToContact(): Contact {
         val modelMapper = ModelMapper()
 
-        val result = modelMapper.map(this,Contact::class.java)
+        val result = modelMapper.map(this, Contact::class.java)
 
         val phones = mutableListOf<Phone>()
         val mails = mutableListOf<Mail>()
@@ -45,19 +52,4 @@ class ContactDTO(
         return result
     }
 
-    fun mapMails(mails: List<Mail>):List<MailDTO>{
-        val result = mutableListOf<MailDTO>()
-        for (i in mails){
-            result.add(MailDTO(i))
-        }
-        return result
-    }
-
-    fun mapPhone(phones: List<Phone>):List<PhoneDTO>{
-        val result = mutableListOf<PhoneDTO>()
-        for (i in phones){
-            result.add(PhoneDTO(i))
-        }
-        return result
-    }
 }

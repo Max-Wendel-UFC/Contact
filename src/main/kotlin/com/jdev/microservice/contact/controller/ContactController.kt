@@ -1,7 +1,7 @@
 package com.jdev.microservice.contact.controller
 
 import com.jdev.microservice.contact.service.ContactService
-import com.jdev.microservice.contact.model.ContactDTO
+import com.jdev.microservice.contact.model.dto.ContactDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
@@ -27,9 +27,9 @@ class ContactController {
     @PostMapping("/save")
     @ResponseBody
     fun saveRequest(@RequestBody contactDTO: ContactDTO): HttpEntity<*> {
-        lateinit var response:ContactDTO
+        lateinit var response: ContactDTO
         try {
-            response = contactService.saveContact(contactDTO)
+            response = contactService.saveContact(contactDTO) as ContactDTO
         }catch (e:RuntimeException){
             return HttpEntity(HttpStatus.NOT_ACCEPTABLE)
         }
@@ -39,9 +39,9 @@ class ContactController {
     @GetMapping("/find")
     @ResponseBody
     fun getContactRequest(@RequestParam(name = "name") name:String): HttpEntity<*> {
-        lateinit var contactDTO:ContactDTO
+        lateinit var contactDTO: ContactDTO
         try {
-            contactDTO = contactService.findByNameContact(name)
+            contactDTO = contactService.findByNameContact(name) as ContactDTO
         }catch (e:RuntimeException){
             return HttpEntity(HttpStatus.NOT_FOUND)
         }
