@@ -1,8 +1,10 @@
 package com.jdev.microservice.contact.model.dto
 
 import org.modelmapper.ModelMapper
+import javax.validation.constraints.Email
 
 class MailDTO(
+        @Email
         var address: String
 ) : ObjectDTO {
 
@@ -13,7 +15,7 @@ class MailDTO(
 
     override fun convertToDTO(any: Any): ObjectDTO {
         val modelMapper = ModelMapper()
-        var mailDTO = modelMapper.map(any, MailDTO::class.java)
+        val mailDTO = modelMapper.map(any, MailDTO::class.java)
         this.address = mailDTO.address
         return this
     }

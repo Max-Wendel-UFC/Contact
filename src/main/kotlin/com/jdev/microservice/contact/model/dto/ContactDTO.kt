@@ -2,10 +2,15 @@ package com.jdev.microservice.contact.model.dto
 
 import com.jdev.microservice.contact.model.Contact
 import org.modelmapper.ModelMapper
+import javax.validation.constraints.NotEmpty
+import javax.validation.constraints.NotNull
 
 class ContactDTO(
+        @NotEmpty
         var name: String,
+        @NotNull
         var phones: List<PhoneDTO>,
+        @NotNull
         var mails: List<MailDTO>
 ) : ObjectDTO {
 

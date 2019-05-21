@@ -1,5 +1,6 @@
 package com.jdev.microservice.contact.controller
 
+import com.jdev.microservice.contact.controller.validator.ContactValidator
 import com.jdev.microservice.contact.model.dto.ContactDTO
 import com.jdev.microservice.contact.service.ContactService
 import org.slf4j.LoggerFactory
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 
 @RestController
 @RequestMapping("/contact")
@@ -15,7 +17,8 @@ class ContactController {
     @Autowired
     lateinit var contactService: ContactService
 
-    val LOG = LoggerFactory.getLogger(this::class.java)
+    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val validator = ContactValidator()
 
     @GetMapping("/")
     @ResponseBody
@@ -33,17 +36,22 @@ class ContactController {
 
     @PostMapping("/save")
     @ResponseBody
-    fun saveRequest(@RequestBody contactDTO: ContactDTO): HttpEntity<*> {
+    fun saveRequest(@RequestBody @Valid contactDTO: ContactDTO): HttpEntity<*> {
         LOG.trace("--- SAVE ---")
-        val response: ContactDTO? = contactService.saveContact(contactDTO) as ContactDTO
+        return if (validator.isValid(contactDTO)){
+            val response: ContactDTO? = contactService.saveContact(contactDTO) as ContactDTO
 
-        return if (response != null) {
-            LOG.trace("OK")
-            HttpEntity(response)
-        } else {
-            LOG.trace("BAD REQUEST")
+            if (response != null) {
+                LOG.trace("OK")
+                HttpEntity(response)
+            } else {
+                LOG.trace("BAD REQUEST")
+                HttpEntity(HttpStatus.NOT_ACCEPTABLE)
+            }
+        }else{
             HttpEntity(HttpStatus.BAD_REQUEST)
         }
+
     }
 
     @GetMapping("/find")
@@ -76,16 +84,21 @@ class ContactController {
 
     @PutMapping("/update")
     @ResponseBody
-    fun updateRequest(@RequestParam(name = "name") name: String, @RequestBody contactDTO: ContactDTO): HttpEntity<*> {
+    fun updateRequest(@RequestParam(name = "name") name: String, @RequestBody @Valid contactDTO: ContactDTO): HttpEntity<*> {
         LOG.trace("--- UPDATE ---")
-        val done = contactService.updateContact(name, contactDTO)
+        return if (validator.isValid(contactDTO)){
 
-        return if (!done) {
-            LOG.trace("NOT FOUND")
-            HttpEntity(HttpStatus.NOT_FOUND)
-        } else{
-            LOG.trace("OK")
-            HttpEntity(HttpStatus.OK)
+            val done = contactService.updateContact(name, contactDTO)
+
+            if (!done) {
+                LOG.trace("NOT FOUND")
+                HttpEntity(HttpStatus.NOT_FOUND)
+            } else{
+                LOG.trace("OK")
+                HttpEntity(HttpStatus.OK)
+            }
+        }else{
+            HttpEntity(HttpStatus.BAD_REQUEST)
         }
     }
 }

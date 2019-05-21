@@ -50,9 +50,9 @@
         <appender-ref ref="SAVE-TO-FILE"/>
     </logger>
 
-<!--    <logger name="com.jdev.microservice.contact." level="TRACE">-->
-<!--        &lt;!&ndash;Salvando no arquivo de saida&ndash;&gt;-->
-<!--        <appender-ref ref="SAVE-TO-FILE"/>-->
-<!--    </logger>-->
+    <logger name="com.jdev.microservice.contact.controller.validator.ContactValidator" level="TRACE">
+        <!--Salvando no arquivo de saida-->
+        <appender-ref ref="SAVE-TO-FILE"/>
+    </logger>
 
 </configuration>
