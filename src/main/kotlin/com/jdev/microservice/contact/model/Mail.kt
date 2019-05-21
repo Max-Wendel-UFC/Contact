@@ -2,8 +2,8 @@ package com.jdev.microservice.contact.model
 
 import javax.persistence.Entity
 import javax.persistence.GeneratedValue
-import javax.persistence.Id
 import javax.persistence.GenerationType
+import javax.persistence.Id
 import javax.validation.constraints.Email
 import javax.validation.constraints.NotBlank
 
@@ -19,5 +19,5 @@ class Mail(@Id
             :this(
             id = 0,
             address = "none@none"
-            )
+    )
 }

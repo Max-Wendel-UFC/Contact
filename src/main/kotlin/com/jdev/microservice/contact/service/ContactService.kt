@@ -4,6 +4,7 @@ import com.jdev.microservice.contact.model.Contact
 import com.jdev.microservice.contact.model.dto.ContactDTO
 import com.jdev.microservice.contact.model.dto.ObjectDTO
 import com.jdev.microservice.contact.repository.ContactRepository
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 
@@ -12,60 +13,67 @@ class ContactService {
     @Autowired
     lateinit var contactRepository: ContactRepository
 
-    fun listAllContact():List<ContactDTO>{
-        val contacts = contactRepository.findAll()
-        val result = mutableListOf<ContactDTO>()
+    private val LOG = LoggerFactory.getLogger(this::class.java)
+
+    fun listAllContact(): List<ContactDTO> {
+        LOG.trace("--- List All Contact ---")
         val aux = ContactDTO()
 
-        for (i in contacts){
-            result.add(aux.convertToDTO(i) as ContactDTO)
+        return contactRepository.findAll().map {
+            LOG.trace(it.name)
+            aux.convertToDTO(it) as ContactDTO
         }
-
-        return result
     }
 
-    fun saveContact(contactDTO: ContactDTO): ObjectDTO {
+    fun saveContact(contactDTO: ContactDTO): ObjectDTO? {
+        LOG.trace("--- Save Contact ---")
         val contactExist = contactRepository.findByName(contactDTO.name)
 
-        if (contactExist.isPresent){
-            throw RuntimeException("is already exists")
-        }else{
+        return if (contactExist.isPresent) {
+            LOG.trace("THIS CONTACT ALREADY EXIST")
+            null
+        } else {
+            LOG.trace("IS NOT PRESENT")
             contactRepository.save(contactDTO.convertToContact())
+            ContactDTO().convertToDTO(contactRepository.findByName(contactDTO.name).get())
         }
-
-        return findByNameContact(contactDTO.name)
     }
 
-    fun findByNameContact(name: String): ObjectDTO {
+    fun findByNameContact(name: String): ObjectDTO? {
+        LOG.trace("--- Find By Name Contact ---")
         val contactExist = contactRepository.findByName(name)
-
-        if (!contactExist.isPresent){
-            throw RuntimeException("Not Found")
+        return if (!contactExist.isPresent) {
+            LOG.trace("IS NOT PRESENT")
+            null
+        } else{
+            LOG.trace("FOUND")
+            ContactDTO().convertToDTO(contactExist.get())
         }
-        val contactDTO = ContactDTO()
-
-        return contactDTO.convertToDTO(contactExist.get())
     }
 
-    fun deleteContact(name: String):Boolean{
+    fun deleteContact(name: String): Boolean {
+        LOG.trace("--- Delete Contact ---")
         val contactExist = contactRepository.findByName(name)
-
-        if(contactExist.isPresent){
+        return if (contactExist.isPresent) {
             contactRepository.deleteById(contactExist.get().id)
-            return true
+            LOG.trace("DELETED")
+            true
+        } else {
+            LOG.trace("IS NOT PRESENT")
+            false
         }
-        return false
     }
 
-    fun updateContact(name: String,contactDTO: ContactDTO):Boolean{
+    fun updateContact(name: String, contactDTO: ContactDTO): Boolean {
+        LOG.trace("--- Update Contact ---")
         val contactExist = contactRepository.findByName(name)
 
-        if (contactExist.isPresent){
+        return if (contactExist.isPresent) {
             val c = contactDTO.convertToContact()
-            contactRepository.save(Contact(contactExist.get().id, c.name,c.phones,c.mails))
-            return true
-        }
+            contactRepository.save(Contact(contactExist.get().id, c.name, c.phones, c.mails))
+            true
+        } else
 
-        return false
+            false
     }
 }

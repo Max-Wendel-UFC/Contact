@@ -7,6 +7,6 @@ import org.springframework.data.rest.core.annotation.RepositoryRestResource
 import java.util.*
 
 @RepositoryRestResource
-interface ContactRepository : JpaRepository<Contact,Long>{
-    fun findByName(@Param("name") name:String):Optional<Contact>
+interface ContactRepository : JpaRepository<Contact, Long> {
+    fun findByName(@Param("name") name: String): Optional<Contact>
 }

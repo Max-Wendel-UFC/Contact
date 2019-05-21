@@ -10,15 +10,15 @@ import javax.validation.constraints.NotBlank
 @Entity
 class Phone(@Id
             @GeneratedValue(strategy = GenerationType.AUTO)
-            val id:Long,
+            val id: Long,
             @NotBlank
-            var number:String,
-            var operatorId:Operator){
+            var number: String,
+            var operatorId: Operator) {
 
     constructor()
-            :this(
-            id=0,
-            number="",
-            operatorId=Operator.UNDEFINED
+            : this(
+            id = 0,
+            number = "",
+            operatorId = Operator.UNDEFINED
     )
 }

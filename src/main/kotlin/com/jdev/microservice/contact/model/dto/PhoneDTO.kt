@@ -1,18 +1,17 @@
 package com.jdev.microservice.contact.model.dto
 
-import com.jdev.microservice.contact.model.Phone
 import com.jdev.microservice.contact.model.enum.Operator
 import org.modelmapper.ModelMapper
 
 class PhoneDTO(
-        var number:String,
-        var operatorId:Operator
-        ):ObjectDTO {
+        var number: String,
+        var operatorId: Operator
+) : ObjectDTO {
 
     constructor()
-            :this(
-            number= "",
-            operatorId= Operator.UNDEFINED
+            : this(
+            number = "",
+            operatorId = Operator.UNDEFINED
     )
 
     override fun convertToDTO(any: Any): ObjectDTO {
