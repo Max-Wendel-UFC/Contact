@@ -6,15 +6,18 @@ import org.slf4j.LoggerFactory
 class ContactValidator {
 
     private lateinit var contactDTO: ContactDTO
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     fun isValid(contactDTO: ContactDTO): Boolean {
-        LOG.trace("--- VALIDATION ---")
-        LOG.trace("Receive: ${contactDTO.name}")
+        log.trace("--- VALIDATION ---")
+        log.trace("Receive: ${contactDTO.name}")
+
         this.contactDTO = contactDTO
-        LOG.trace("IS SUPORTABLE: ${isSuportable()}")
-        LOG.trace("HASN'T NULL VALUES: ${itHasNotNullValues()}")
-        LOG.trace("VALIDATION RESULT: ${isSuportable() && itHasNotNullValues()}")
+
+        log.trace("IS SUPORTABLE: ${isSuportable()}")
+        log.trace("HASN'T NULL VALUES: ${itHasNotNullValues()}")
+        log.trace("VALIDATION RESULT: ${isSuportable() && itHasNotNullValues()}")
+
         return isSuportable() && itHasNotNullValues()
     }
 

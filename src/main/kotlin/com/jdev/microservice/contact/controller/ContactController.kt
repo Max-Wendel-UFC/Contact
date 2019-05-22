@@ -17,38 +17,38 @@ class ContactController {
     @Autowired
     lateinit var contactService: ContactService
 
-    private val LOG = LoggerFactory.getLogger(this::class.java)
+    private val log = LoggerFactory.getLogger(this::class.java)
     private val validator = ContactValidator()
 
     @GetMapping("/")
     @ResponseBody
     fun getAllRequest(): HttpEntity<*> {
-        LOG.trace("--- GET ALL ---")
+        log.trace("--- getAllRequest ---")
         val result = contactService.listAllContact()
-        return if (result.isNotEmpty()) {
-            LOG.trace("OK")
-            HttpEntity(result)
-        } else{
-            LOG.trace("NO CONTENT")
+        return if (result.isEmpty()) {
+            log.trace("getAllRequest: NO CONTENT")
             HttpEntity(HttpStatus.NO_CONTENT)
+        } else {
+            log.trace("getAllRequest: OK")
+            HttpEntity(result)
         }
     }
 
     @PostMapping("/save")
     @ResponseBody
     fun saveRequest(@RequestBody @Valid contactDTO: ContactDTO): HttpEntity<*> {
-        LOG.trace("--- SAVE ---")
-        return if (validator.isValid(contactDTO)){
-            val response: ContactDTO? = contactService.saveContact(contactDTO) as ContactDTO
+        log.trace("--- saveRequest ---")
+        return if (validator.isValid(contactDTO)) {
+            val response = contactService.saveContact(contactDTO) as ContactDTO
 
-            if (response != null) {
-                LOG.trace("OK")
-                HttpEntity(response)
-            } else {
-                LOG.trace("BAD REQUEST")
+            if (response.name.isEmpty()) {
+                log.trace("saveRequest: BAD REQUEST")
                 HttpEntity(HttpStatus.NOT_ACCEPTABLE)
+            } else {
+                log.trace("saveRequest: OK")
+                HttpEntity(response)
             }
-        }else{
+        } else {
             HttpEntity(HttpStatus.BAD_REQUEST)
         }
 
@@ -57,14 +57,14 @@ class ContactController {
     @GetMapping("/find")
     @ResponseBody
     fun getContactRequest(@RequestParam(name = "name") name: String): HttpEntity<*> {
-        LOG.trace("--- GET CONTACT ---")
-        val contactDTO = contactService.findByNameContact(name) as ContactDTO?
+        log.trace("--- getContactRequest ---")
+        val contactDTO = contactService.findByNameContact(name) as ContactDTO
 
-        return if (contactDTO == null) {
-            LOG.trace("NOT FOUND")
+        return if (contactDTO.name.isEmpty()) {
+            log.trace("getContactRequest: NOT FOUND")
             HttpEntity(HttpStatus.NOT_FOUND)
         } else {
-            LOG.trace("OK")
+            log.trace("getContactRequest: OK")
             HttpEntity(contactDTO)
         }
     }
@@ -72,12 +72,12 @@ class ContactController {
     @DeleteMapping("/delete")
     @ResponseBody
     fun deleteRequest(@RequestParam(name = "name") name: String): HttpEntity<*> {
-        LOG.trace("--- DELETE ---")
+        log.trace("--- deleteRequest ---")
         return if (!contactService.deleteContact(name)) {
-            LOG.trace("NOT FOUND")
+            log.trace("deleteRequest: NOT FOUND")
             HttpEntity(HttpStatus.NOT_FOUND)
-        } else{
-            LOG.trace("OK")
+        } else {
+            log.trace("deleteRequest: OK")
             HttpEntity(HttpStatus.OK)
         }
     }
@@ -85,19 +85,19 @@ class ContactController {
     @PutMapping("/update")
     @ResponseBody
     fun updateRequest(@RequestParam(name = "name") name: String, @RequestBody @Valid contactDTO: ContactDTO): HttpEntity<*> {
-        LOG.trace("--- UPDATE ---")
-        return if (validator.isValid(contactDTO)){
+        log.trace("--- updateRequest ---")
+        return if (validator.isValid(contactDTO)) {
 
             val done = contactService.updateContact(name, contactDTO)
 
             if (!done) {
-                LOG.trace("NOT FOUND")
+                log.trace("updateRequest: NOT FOUND")
                 HttpEntity(HttpStatus.NOT_FOUND)
-            } else{
-                LOG.trace("OK")
+            } else {
+                log.trace("updateRequest: OK")
                 HttpEntity(HttpStatus.OK)
             }
-        }else{
+        } else {
             HttpEntity(HttpStatus.BAD_REQUEST)
         }
     }

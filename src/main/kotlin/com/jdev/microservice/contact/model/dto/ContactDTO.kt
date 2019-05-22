@@ -15,14 +15,7 @@ class ContactDTO(
 ) : ObjectDTO {
 
     override fun convertToDTO(any: Any): ObjectDTO {
-        val modelMapper = ModelMapper()
-        val contact = modelMapper.map(any, ContactDTO::class.java)
-
-        this.name = contact.name
-        this.phones = contact.phones
-        this.mails = contact.mails
-
-        return this
+        return ModelMapper().map(any, ContactDTO::class.java)
     }
 
     constructor()
